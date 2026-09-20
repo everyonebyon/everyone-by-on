@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos</title>
+    <style>
+        :root {
+            --primary-color: #4CBB17;
+            --dark-color: #111111;
+            --gray-light: #f9f9f9;
+            --border-color: #eaeaea;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: var(--dark-color);
+        }
+        header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+        header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        .btn-carrito {
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-carrito:hover {
+            background-color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .hero {
+            margin-bottom: 30px;
+        }
+        .hero h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+        .hero p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        .grid-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+        }
+        .card-img-container {
+            width: 100%;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
+            background: var(--gray-light);
+            margin-bottom: 15px;
+        }
+        .card img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card p {
+            font-size: 12px;
+            color: #666;
+            margin: 0 0 15px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .price {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .btn-agregar {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-agregar:hover {
+            background-color: #3fa512;
+        }
+
+        /* Estilos del Panel Lateral del Carrito (Drawer) */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            display: none;
+            z-index: 1000;
+        }
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            max-width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s ease;
+        }
+        .cart-drawer.open {
+            right: 0;
+        }
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .btn-cerrar {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .cart-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .cart-item-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+        .cart-item-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .btn-eliminar {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--gray-light);
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .btn-whatsapp {
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-whatsapp:hover {
+            background-color: #1ebe57;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mi Tienda Online</h1>
+        <button class="btn-carrito" onclick="toggleCart()">
+            🛒 Carrito <span id="contador-carrito">0</span>
+        </button>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h2>Catálogo Disponible</h2>
+            <p>Selecciona los productos que deseas y haz tu pedido al instante</p>
+        </div>
+
+        <div id="contenedor-catalogo" class="loading">
+            Cargando productos...
+        </div>
+    </div>
+
+    <!-- Panel Lateral del Carrito -->
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Tu Carrito de Compras</h3>
+            <button class="btn-cerrar" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-body" id="cart-items-container">
+            <p style="color: #666; text-align: center;">El carrito está vacío</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
+                Pedir por WhatsApp 💬
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ⚙️ CONFIGURACIÓN DE LA PLANTILLA (CADA CLIENTE)
+        // ==========================================
+        const CONFIG = {
+            SHEET_ID: "1GwO-Nn8mMCgxbn4vQ69dFiEUiAYviDeTOIA0d0glE8A", // Reemplaza aquí con el ID de la hoja del cliente
+            WHATSAPP_NUMBER: "584249387699"     // Número con código de país (sin el símbolo +)
+        };
+
+        let carrito = [];
+
+        const URL_SHEET = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Productos`;
+
+        async function cargarCatalogo() {
+            const contenedor = document.getElementById("contenedor-catalogo");
+            try {
+                const respuesta = await fetch(URL_SHEET);
+                const datosCsv = await respuesta.text();
+                const filas = parsearCSV(datosCsv);
+                
+                if (filas.length <= 1) {
+                    contenedor.innerHTML = "<p>No hay productos disponibles.</p>";
+                    return;
+                }
+
+                const cabeceras = filas[0].map(h => h.trim().toLowerCase());
+                const idxNombre = cabeceras.indexOf("nombre");
+                const idxDesc = cabeceras.findIndex(h => h.includes("descripción") || h.includes("descripcion"));
+                const idxPrecio = cabeceras.indexOf("precio");
+                const idxImagen = cabeceras.findIndex(h => h.includes("imagen") || h.includes("url_imagen"));
+                const idxEstado = cabeceras.indexOf("estado");
+
+                let htmlGrid = '<div class="grid-productos">';
+                let hayDisponibles = false;
+
+                for (let i = 1; i < filas.length; i++) {
+                    const fila = filas[i];
+                    if (fila.length < cabeceras.length) continue;
+
+                    const nombre = idxNombre !== -1 ? fila[idxNombre] : "";
+                    const descripcion = idxDesc !== -1 ? fila[idxDesc] : "";
+                    const precio = idxPrecio !== -1 ? parseFloat(fila[idxPrecio]) || 0 : 0;
+                    const imagen = idxImagen !== -1 ? fila[idxImagen] : "";
+                    const estado = idxEstado !== -1 ? fila[idxEstado].trim().toLowerCase() : "";
+
+                    if (estado === "disponible") {
+                        hayDisponibles = true;
+                        // Usamos codificación segura para pasar los datos al carrito
+                        htmlGrid += `
+                            <div class="card">
+                                <div>
+                                    <div class="card-img-container">
+                                        <img src="${imagen}" alt="${nombre}">
+                                    </div>
+                                    <h3>${nombre}</h3>
+                                    <p>${descripcion}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <span class="price">$${precio.toFixed(2)}</span>
+                                    <button class="btn-agregar" onclick="agregarAlCarrito('${nombre.replace(/'/g, "\\'")}', ${precio})">Agregar</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                htmlGrid += '</div>';
+                contenedor.innerHTML = hayDisponibles ? htmlGrid : "<p style='text-align:center;'>No hay productos disponibles.</p>";
+
+            } catch (error) {
+                console.error("Error:", error);
+                contenedor.innerHTML = "<p style='color: red;'>Error al conectar con la base de datos. Verifica el ID de tu hoja.</p>";
+            }
+        }
+
+        function agregarAlCarrito(nombre, precio) {
+            carrito.push({ nombre, precio });
+            actualizarCarritoUI();
+            
+            // Efecto visual rápido en el botón del carrito
+            const contador = document.getElementById("contador-carrito");
+            contador.style.transform = "scale(1.3)";
+            setTimeout(() => contador.style.transform = "scale(1)", 200);
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarritoUI();
+        }
+
+        function actualizarCarritoUI() {
+            document.getElementById("contador-carrito").innerText = carrito.length;
+            
+            const contenedorItems = document.getElementById("cart-items-container");
+            const totalPrecioEl = document.getElementById("cart-total-price");
+
+            if (carrito.length === 0) {
+                contenedorItems.innerHTML = '<p style="color: #666; text-align: center; margin-top: 40px;">El carrito está vacío</p>';
+                totalPrecioEl.innerText = "$0.00";
+                return;
+            }
+
+            let htmlItems = "";
+            let total = 0;
+
+            carrito.forEach((item, index) => {
+                total += item.precio;
+                htmlItems += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.nombre}</h4>
+                            <p>$${item.precio.toFixed(2)}</p>
+                        </div>
+                        <button class="btn-eliminar" onclick="eliminarDelCarrito(${index})">Eliminar</button>
+                    </div>
+                `;
+            });
+
+            contenedorItems.innerHTML = htmlItems;
+            totalPrecioEl.innerText = `$${total.toFixed(2)}`;
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById("cart-drawer");
+            const overlay = document.getElementById("cart-overlay");
+            const isOpen = drawer.classList.toggle("open");
+            overlay.style.display = isOpen ? "block" : "none";
+        }
+
+        function enviarPedidoWhatsApp() {
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+
+            let mensaje = "Hola! Quisiera realizar el siguiente pedido:\n\n";
+            let total = 0;
+
+            carrito.forEach((item, i) => {
+                mensaje += `${i + 1}. ${item.nombre} - $${item.precio.toFixed(2)}\n`;
+                total += item.precio;
+            });
+
+            mensaje += `\n*Total a pagar: $${total.toFixed(2)}*\n\nQuedo atento para coordinar el pago y la entrega.`;
+
+            const urlWhatsApp = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        function parsearCSV(texto) {
+            let lineas = texto.split("\n");
+            let resultado = [];
+            for (let i = 0; i < lineas.length; i++) {
+                let fila = [];
+                let enComillas = false;
+                let valorActual = "";
+                let linea = lineas[i];
+                for (let j = 0; j < linea.length; j++) {
+                    let char = linea[j];
+                    if (char === '"') {
+                        enComillas = !enComillas;
+                    } else if (char === ',' && !enComillas) {
+                        fila.push(valorActual.trim().replace(/^"|"$/g, ''));
+                        valorActual = "";
+                    } else {
+                        valorActual += char;
+                    }
+                }
+                fila.push(valorActual.trim().replace(/^"|"$/g, ''));
+                if (fila.length > 1 || fila[0] !== "") {
+                    resultado.push(fila);
+                }
+            }
+            return resultado;
+        }
+
+        cargarCatalogo();
+    </script>
+</body>
+</html>
