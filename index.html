@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Productos</title>
+    <!-- Favicon de la tienda -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk">
     <style>
         :root {
             --primary-color: #4CBB17;
@@ -22,10 +24,10 @@
             min-height: 100vh;
         }
         header {
-            padding: 20px 40px;
+            padding: 15px 40px;
             border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             position: sticky;
             top: 0;
@@ -33,21 +35,35 @@
             backdrop-filter: blur(5px);
             z-index: 100;
         }
+        /* Espacio izquierdo reservado para equilibrio visual */
+        header::before {
+            content: "";
+            grid-column: 1;
+        }
         .brand-container {
+            grid-column: 2;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: 14px;
+            text-align: center;
         }
         .brand-logo {
-            height: 36px;
-            max-width: 120px;
+            height: 50px; /* Logo más grande y elegante */
+            max-width: 160px;
             object-fit: contain;
         }
         header h1 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             margin: 0;
             letter-spacing: -0.5px;
+            white-space: nowrap;
+        }
+        .header-actions {
+            grid-column: 3;
+            display: flex;
+            justify-content: flex-end;
         }
         .btn-carrito {
             background-color: var(--dark-color);
@@ -182,7 +198,7 @@
             justify-content: center;
             overflow: hidden;
             border-radius: 8px;
-            background: #fff;
+            background: var(--gray-light);
             margin-bottom: 15px;
         }
         .card img {
@@ -331,12 +347,14 @@
 
     <header>
         <div class="brand-container">
-            <img id="logo-tienda" class="brand-logo" src="" alt="" style="display: none;">
+            <img id="logo-tienda" class="brand-logo" src="" alt="Logo" style="display: none;">
             <h1 id="titulo-tienda">Mi Tienda Online</h1>
         </div>
-        <button class="btn-carrito" onclick="toggleCart()">
-            🛒 Carrito <span id="contador-carrito">0</span>
-        </button>
+        <div class="header-actions">
+            <button class="btn-carrito" onclick="toggleCart()">
+                🛒 Carrito <span id="contador-carrito">0</span>
+            </button>
+        </div>
     </header>
 
     <div class="container">
@@ -403,7 +421,8 @@
             SHEET_ID: "1GwO-Nn8mMCgxbn4vQ69dFiEUiAYviDeTOIA0d0glE8A", // Reemplaza con tu ID real
             WHATSAPP_NUMBER: "584249387699",    // Tu número con código de país (sin +)
             STORE_NAME: "EveryONe by ON",    // Nombre del negocio
-            LOGO_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL de la imagen del logo (opcional. Si se deja en blanco, muestra texto)
+            LOGO_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del logotipo (opcional). Si se coloca, aparecerá junto al título en el centro.
+            FAVICON_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del ícono de la pestaña del navegador (opcional)
             SOCIAL_LINKS: {
                 instagram: "https://instagram.com/everyone.by.on",
                 facebook: "https://facebook.com/everyone.by.on",
@@ -423,11 +442,22 @@
             document.getElementById("footer-nombre-tienda").innerText = CONFIG.STORE_NAME;
             document.title = CONFIG.STORE_NAME + " - Catálogo";
 
+            // Configurar Favicon si existe
+            if (CONFIG.FAVICON_URL.trim() !== "") {
+                const faviconLink = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                faviconLink.type = 'image/png';
+                faviconLink.rel = 'shortcut icon';
+                faviconLink.href = CONFIG.FAVICON_URL;
+                document.getElementsByTagName('head')[0].appendChild(faviconLink);
+            }
+
+            // Configurar Logotipo central si existe
             const logoEl = document.getElementById("logo-tienda");
             if (CONFIG.LOGO_URL.trim() !== "") {
                 logoEl.src = CONFIG.LOGO_URL;
                 logoEl.style.display = "block";
-                document.getElementById("titulo-tienda").style.display = "none"; // Oculta el texto si hay logo
+            } else {
+                logoEl.style.display = "none";
             }
 
             // Generar enlaces de redes sociales en el footer
@@ -567,7 +597,7 @@
             }
 
             actualizarCarritoUI();
-            filtrarProductos(); // Actualiza la vista manteniendo el filtro actual
+            filtrarProductos();
 
             const contador = document.getElementById("contador-carrito");
             contador.style.transform = "scale(1.3)";
