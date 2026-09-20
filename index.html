@@ -23,47 +23,52 @@
             flex-direction: column;
             min-height: 100vh;
         }
+        
+        /* Header con Centrado Absoluto Inteligente para evitar desbordes */
         header {
-            padding: 15px 40px;
+            padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             z-index: 100;
-        }
-        /* Espacio izquierdo reservado para equilibrio visual */
-        header::before {
-            content: "";
-            grid-column: 1;
+            min-height: 70px;
+            box-sizing: border-box;
         }
         .brand-container {
-            grid-column: 2;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            gap: 10px;
+            max-width: 52%;
+            padding: 0 10px;
+            box-sizing: border-box;
             text-align: center;
         }
         .brand-logo {
-            height: 50px; /* Logo más grande y elegante */
-            max-width: 160px;
+            height: 45px;
+            max-width: 140px;
             object-fit: contain;
         }
         header h1 {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
             margin: 0;
             letter-spacing: -0.5px;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Evita desbordes cortando elegantemente con '...' si es muy largo en móviles */
         }
         .header-actions {
-            grid-column: 3;
-            display: flex;
-            justify-content: flex-end;
+            margin-left: auto;
+            z-index: 2;
         }
         .btn-carrito {
             background-color: var(--dark-color);
@@ -78,10 +83,33 @@
             align-items: center;
             gap: 8px;
             transition: background 0.2s;
+            white-space: nowrap;
         }
         .btn-carrito:hover {
             background-color: #333;
         }
+
+        /* Ajustes específicos para móviles pequeños */
+        @media(max-width: 480px) {
+            header {
+                padding: 12px 15px;
+            }
+            .brand-container {
+                max-width: 48%;
+            }
+            .brand-logo {
+                height: 36px;
+                max-width: 100px;
+            }
+            header h1 {
+                font-size: 15px;
+            }
+            .btn-carrito {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+        }
+
         .container {
             max-width: 1200px;
             margin: 40px auto;
@@ -421,7 +449,7 @@
             SHEET_ID: "1GwO-Nn8mMCgxbn4vQ69dFiEUiAYviDeTOIA0d0glE8A", // Reemplaza con tu ID real
             WHATSAPP_NUMBER: "584249387699",    // Tu número con código de país (sin +)
             STORE_NAME: "EveryONe by ON",    // Nombre del negocio
-            LOGO_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del logotipo (opcional). Si se coloca, aparecerá junto al título en el centro.
+            LOGO_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del logotipo (opcional).
             FAVICON_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del ícono de la pestaña del navegador (opcional)
             SOCIAL_LINKS: {
                 instagram: "https://instagram.com/everyone.by.on",
