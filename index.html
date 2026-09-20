@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Productos</title>
     <!-- Favicon de la tienda -->
-    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk">
+    <link rel="icon" type="image/png" href="">
     <style>
         :root {
             --primary-color: #4CBB17;
@@ -24,7 +24,7 @@
             min-height: 100vh;
         }
         
-        /* Header con Centrado Absoluto Inteligente para evitar desbordes */
+        /* Header Limpio: Izquierda (Logo + Nombre) / Derecha (Carrito) */
         header {
             padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
@@ -36,45 +36,42 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             z-index: 100;
-            min-height: 70px;
             box-sizing: border-box;
         }
         .brand-container {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            max-width: 52%;
-            padding: 0 10px;
-            box-sizing: border-box;
-            text-align: center;
+            overflow: hidden;
+            flex: 1;
+            margin-right: 15px;
         }
+        
+        /* 1. TAMAÑO MÓVIL PEQUEÑO (Por defecto) */
         .brand-logo {
-            height: 45px;
-            max-width: 140px;
+            height: 32px;
+            max-width: 100px;
             object-fit: contain;
+            flex-shrink: 0;
         }
         header h1 {
-            font-size: 19px;
+            font-size: 16px;
             font-weight: 700;
             margin: 0;
             letter-spacing: -0.5px;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* Evita desbordes cortando elegantemente con '...' si es muy largo en móviles */
+            text-overflow: ellipsis;
         }
+
         .header-actions {
-            margin-left: auto;
-            z-index: 2;
+            flex-shrink: 0;
         }
         .btn-carrito {
             background-color: var(--dark-color);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
@@ -89,24 +86,38 @@
             background-color: #333;
         }
 
-        /* Ajustes específicos para móviles pequeños */
-        @media(max-width: 480px) {
+        /* 2. TAMAÑO TABLET (A partir de 481px) */
+        @media(min-width: 481px) {
             header {
-                padding: 12px 15px;
-            }
-            .brand-container {
-                max-width: 48%;
+                padding: 15px 30px;
             }
             .brand-logo {
-                height: 36px;
-                max-width: 100px;
+                height: 40px;
+                max-width: 130px;
             }
             header h1 {
-                font-size: 15px;
+                font-size: 18px;
+            }
+        }
+
+        /* 3. TAMAÑO DESKTOP / ESCRITORIO (A partir de 768px) */
+        @media(min-width: 768px) {
+            header {
+                padding: 20px 40px;
+            }
+            .brand-container {
+                gap: 14px;
+            }
+            .brand-logo {
+                height: 48px;
+                max-width: 160px;
+            }
+            header h1 {
+                font-size: 21px;
             }
             .btn-carrito {
-                padding: 7px 12px;
-                font-size: 12px;
+                padding: 9px 18px;
+                font-size: 14px;
             }
         }
 
@@ -446,15 +457,15 @@
         // ⚙️ CONFIGURACIÓN DE LA PLANTILLA (CADA CLIENTE)
         // ==========================================
         const CONFIG = {
-            SHEET_ID: "1GwO-Nn8mMCgxbn4vQ69dFiEUiAYviDeTOIA0d0glE8A", // Reemplaza con tu ID real
-            WHATSAPP_NUMBER: "584249387699",    // Tu número con código de país (sin +)
-            STORE_NAME: "EveryONe by ON",    // Nombre del negocio
-            LOGO_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del logotipo (opcional).
-            FAVICON_URL: "https://lh3.googleusercontent.com/d/1d_y7B5OLrkzGpgYtwH8Tg0yzJWw1rpNk",    // URL del ícono de la pestaña del navegador (opcional)
+            SHEET_ID: "TU_ID_DE_GOOGLE_SHEET", // Reemplaza con tu ID real
+            WHATSAPP_NUMBER: "584121234567",    // Tu número con código de país (sin +)
+            STORE_NAME: "Tu Emprendimiento",    // Nombre del negocio
+            LOGO_URL: "",                       // URL del logotipo (opcional). Aparecerá junto al título a la izquierda.
+            FAVICON_URL: "",                    // URL del ícono de la pestaña del navegador (opcional)
             SOCIAL_LINKS: {
-                instagram: "https://instagram.com/everyone.by.on",
-                facebook: "https://facebook.com/everyone.by.on",
-                tiktok: "https://tiktok.com/@everyone.by.on"
+                instagram: "https://instagram.com/tuemprendimiento",
+                facebook: "https://facebook.com/tuemprendimiento",
+                tiktok: "https://tiktok.com/@tuemprendimiento"
             }
         };
 
@@ -479,7 +490,7 @@
                 document.getElementsByTagName('head')[0].appendChild(faviconLink);
             }
 
-            // Configurar Logotipo central si existe
+            // Configurar Logotipo a la izquierda junto al título si existe
             const logoEl = document.getElementById("logo-tienda");
             if (CONFIG.LOGO_URL.trim() !== "") {
                 logoEl.src = CONFIG.LOGO_URL;
